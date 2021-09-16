@@ -2,28 +2,23 @@ package main
 
 import (
 	"encoding/json"
-
+	"fmt"
 	"log"
-
 	"net/http"
 
 	"github.com/gorilla/mux"
-
 	"github.com/jinzhu/gorm"
-
 	"github.com/rs/cors"
 
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-type Client struct {
+type User struct {
 	gorm.Model
 
 	email string
 
 	phoneNumber string
-
-	EventLogs []EventLog
 }
 
 type EventLog struct {
@@ -32,7 +27,8 @@ type EventLog struct {
 	LandingPageHits int
 
 	VideoPlays int
-	ClientID   int
+
+	UserID int
 }
 
 var db *gorm.DB
@@ -40,7 +36,7 @@ var db *gorm.DB
 var err error
 
 var (
-	clients = []Client{
+	users = []User{
 
 		{email: "james@email.com", phoneNumber: "00000000"},
 
@@ -51,21 +47,19 @@ var (
 
 	eventLogs = []EventLog{
 
-		{LandingPageHits: 1, VideoPlays: 1, ClientID: 1},
+		{LandingPageHits: 1, VideoPlays: 1, UserID: 1},
 
-		{LandingPageHits: 24, VideoPlays: 36, ClientID: 2},
+		{LandingPageHits: 24, VideoPlays: 36, UserID: 2},
 
-		{LandingPageHits: 7, VideoPlays: 15, ClientID: 2},
-
-		{LandingPageHits: 63, VideoPlays: 125, ClientID: 3},
+		{LandingPageHits: 63, VideoPlays: 125, UserID: 3},
 	}
 )
 
 func main() {
 
 	router := mux.NewRouter()
-
-	db, err = gorm.Open("postgres", "host=localhost port=5432 user=postgres dbname=postgres sslmode=disable password=Mokka987!")
+	dbSource := fmt.Sprintf("host=localhost port=5432 user=%s dbname=communications sslmode=disable password=%s", DbUser, DbPassword)
+	db, err = gorm.Open("postgres", dbSource)
 
 	if err != nil {
 
@@ -75,13 +69,13 @@ func main() {
 
 	defer db.Close()
 
-	db.AutoMigrate(&Client{})
+	db.AutoMigrate(&User{})
 
 	db.AutoMigrate(&EventLog{})
 
-	for index := range clients {
+	for index := range users {
 
-		db.Create(&clients[index])
+		db.Create(&users[index])
 
 	}
 
@@ -91,13 +85,13 @@ func main() {
 
 	}
 
-	router.HandleFunc("/cars", GetCars).Methods("GET")
+	router.HandleFunc("/eventLogs", GetEventLogs).Methods("GET")
 
-	router.HandleFunc("/cars/{id}", GetCar).Methods("GET")
+	router.HandleFunc("/eventLogs/{id}", GetEventLog).Methods("GET")
 
-	router.HandleFunc("/drivers/{id}", GetDriver).Methods("GET")
+	router.HandleFunc("/users/{id}", GetUser).Methods("GET")
 
-	router.HandleFunc("/cars/{id}", DeleteCar).Methods("DELETE")
+	router.HandleFunc("/eventLogs/{id}", DeleteEventLog).Methods("DELETE")
 
 	handler := cors.Default().Handler(router)
 
@@ -105,60 +99,54 @@ func main() {
 
 }
 
-func GetCars(w http.ResponseWriter, r *http.Request) {
+func GetEventLogs(w http.ResponseWriter, r *http.Request) {
 
-	var cars []Car
+	var eventLogs []EventLog
 
-	db.Find(&cars)
+	db.Find(&eventLogs)
 
-	json.NewEncoder(w).Encode(&cars)
-
-}
-
-func GetCar(w http.ResponseWriter, r *http.Request) {
-
-	params := mux.Vars(r)
-
-	var car Car
-
-	db.First(&car, params["id"])
-
-	json.NewEncoder(w).Encode(&car)
+	json.NewEncoder(w).Encode(&eventLogs)
 
 }
 
-func GetDriver(w http.ResponseWriter, r *http.Request) {
+func GetEventLog(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 
-	var driver Driver
+	var eventLog EventLog
 
-	var cars []Car
+	db.First(&eventLog, params["id"])
 
-	db.First(&driver, params["id"])
-
-	db.Model(&driver).Related(&cars)
-
-	driver.Cars = cars
-
-	json.NewEncoder(w).Encode(&driver)
+	json.NewEncoder(w).Encode(&eventLog)
 
 }
 
-func DeleteCar(w http.ResponseWriter, r *http.Request) {
+func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	params := mux.Vars(r)
 
-	var car Car
+	var user User
 
-	db.First(&car, params["id"])
+	db.First(&user, params["id"])
 
-	db.Delete(&car)
+	json.NewEncoder(w).Encode(&user)
 
-	var cars []Car
+}
 
-	db.Find(&cars)
+func DeleteEventLog(w http.ResponseWriter, r *http.Request) {
 
-	json.NewEncoder(w).Encode(&cars)
+	params := mux.Vars(r)
+
+	var eventLog EventLog
+
+	db.First(&eventLog, params["id"])
+
+	db.Delete(&eventLog)
+
+	var eventLogs []EventLog
+
+	db.Find(&eventLog)
+
+	json.NewEncoder(w).Encode(&eventLogs)
 
 }
