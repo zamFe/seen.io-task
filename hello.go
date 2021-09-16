@@ -16,26 +16,23 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
-type Driver struct {
+type Client struct {
 	gorm.Model
 
-	Name string
+	email string
 
-	License string
+	phoneNumber string
 
-	Cars []Car
+	EventLogs []EventLog
 }
 
-type Car struct {
+type EventLog struct {
 	gorm.Model
 
-	Year int
+	LandingPageHits int
 
-	Make string
-
-	ModelName string
-
-	DriverID int
+	VideoPlays int
+	ClientID   int
 }
 
 var db *gorm.DB
@@ -43,24 +40,24 @@ var db *gorm.DB
 var err error
 
 var (
-	drivers = []Driver{
+	clients = []Client{
 
-		{Name: "Jimmy Johnson", License: "ABC123"},
+		{email: "james@email.com", phoneNumber: "00000000"},
 
-		{Name: "Howard Hills", License: "XYZ789"},
+		{email: "chris@email.com", phoneNumber: "11111111"},
 
-		{Name: "Craig Colbin", License: "DEF333"},
+		{email: "jenny@email.com", phoneNumber: "22222222"},
 	}
 
-	cars = []Car{
+	eventLogs = []EventLog{
 
-		{Year: 2000, Make: "Toyota", ModelName: "Tundra", DriverID: 1},
+		{LandingPageHits: 1, VideoPlays: 1, ClientID: 1},
 
-		{Year: 2001, Make: "Honda", ModelName: "Accord", DriverID: 1},
+		{LandingPageHits: 24, VideoPlays: 36, ClientID: 2},
 
-		{Year: 2002, Make: "Nissan", ModelName: "Sentra", DriverID: 2},
+		{LandingPageHits: 7, VideoPlays: 15, ClientID: 2},
 
-		{Year: 2003, Make: "Ford", ModelName: "F-150", DriverID: 3},
+		{LandingPageHits: 63, VideoPlays: 125, ClientID: 3},
 	}
 )
 
@@ -78,19 +75,19 @@ func main() {
 
 	defer db.Close()
 
-	db.AutoMigrate(&Driver{})
+	db.AutoMigrate(&Client{})
 
-	db.AutoMigrate(&Car{})
+	db.AutoMigrate(&EventLog{})
 
-	for index := range cars {
+	for index := range clients {
 
-		db.Create(&cars[index])
+		db.Create(&clients[index])
 
 	}
 
-	for index := range drivers {
+	for index := range eventLogs {
 
-		db.Create(&drivers[index])
+		db.Create(&eventLogs[index])
 
 	}
 
