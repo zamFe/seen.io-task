@@ -1,4 +1,4 @@
-module seenio/hello
+module seenio/dbContext
 
 go 1.17
 
