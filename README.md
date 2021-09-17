@@ -7,4 +7,13 @@ Object-relation mappings done using the gorm-package.
 
 ### Endpoints
 
-`/eventLogs` [GET]
+#### GET
+`/eventLogs` 
+`/eventlogs/{id}`
+`/users`
+`/users/{id}`
+#### PATCH
+`/eventlogs/videoplays/{id}`
+`/eventlogs/landingpagehits/{id}`
+#### DELETE
+`/eventlogs/{id}`
