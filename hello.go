@@ -1,3 +1,5 @@
+//TODO: Use dbresolver to manage multiple databases
+
 package main
 
 import (
@@ -89,6 +91,8 @@ func main() {
 
 	router.HandleFunc("/eventLogs/{id}", GetEventLog).Methods("GET")
 
+	router.HandleFunc("/users", GetUsers).Methods("GET")
+
 	router.HandleFunc("/users/{id}", GetUser).Methods("GET")
 
 	router.HandleFunc("/eventLogs/{id}", DeleteEventLog).Methods("DELETE")
@@ -119,6 +123,15 @@ func GetEventLog(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(&eventLog)
 
+}
+
+func GetUsers(w http.ResponseWriter, r *http.Request) {
+
+	var users []User
+
+	db.Find(&users)
+
+	json.NewEncoder(w).Encode(&users)
 }
 
 func GetUser(w http.ResponseWriter, r *http.Request) {
