@@ -18,9 +18,9 @@ import (
 type User struct {
 	gorm.Model
 
-	email string
+	Email string
 
-	phoneNumber string
+	PhoneNumber string
 }
 
 type EventLog struct {
@@ -40,11 +40,11 @@ var err error
 var (
 	users = []User{
 
-		{email: "james@email.com", phoneNumber: "00000000"},
+		{Email: "james@email.com", PhoneNumber: "00000000"},
 
-		{email: "chris@email.com", phoneNumber: "11111111"},
+		{Email: "chris@email.com", PhoneNumber: "11111111"},
 
-		{email: "jenny@email.com", phoneNumber: "22222222"},
+		{Email: "jenny@email.com", PhoneNumber: "22222222"},
 	}
 
 	eventLogs = []EventLog{
