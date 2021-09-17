@@ -81,6 +81,10 @@ func main() {
 
 	router.HandleFunc("/eventlogs/{id}", DeleteEventLog).Methods("DELETE")
 
+	router.HandleFunc("/eventlogs/videoplays/{id}", UpdateVideoPlays).Methods("PATCH")
+
+	router.HandleFunc("/eventlogs/landingpagehits/{id}", UpdateLandingPageHits).Methods("PATCH")
+
 	handler := cors.Default().Handler(router)
 
 	log.Fatal(http.ListenAndServe(":8080", handler))
@@ -128,6 +132,32 @@ func GetUser(w http.ResponseWriter, r *http.Request) {
 
 	json.NewEncoder(w).Encode(&user)
 
+}
+
+func UpdateLandingPageHits(w http.ResponseWriter, r *http.Request) {
+
+	params := mux.Vars(r)
+
+	var eventLog model.EventLog
+
+	json.NewDecoder(r.Body).Decode(&eventLog)
+
+	db.Model(&eventLog).Where("user_id = ?", params["id"]).Update("landing_page_hits", eventLog.LandingPageHits)
+
+	json.NewEncoder(w).Encode((&eventLog))
+}
+
+func UpdateVideoPlays(w http.ResponseWriter, r *http.Request) {
+
+	params := mux.Vars(r)
+
+	var eventLog model.EventLog
+
+	json.NewDecoder(r.Body).Decode(&eventLog)
+
+	db.Model(&eventLog).Where("user_id = ?", params["id"]).Update("video_plays", eventLog.VideoPlays)
+
+	json.NewEncoder(w).Encode((&eventLog))
 }
 
 func DeleteEventLog(w http.ResponseWriter, r *http.Request) {
