@@ -5,6 +5,12 @@
 A REST-API written in GoLang, using a psql database.
 Object-relation mappings done using the gorm-package.
 
+### Requirements
+Applications requires a config.go file with two consts:
+
+- DbUser
+- DbPassword
+
 ### Tables
 
 #### User
