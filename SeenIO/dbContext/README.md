@@ -15,6 +15,7 @@ Applications requires a config.go file with two consts:
 
 1. set up config file as mentioned above
 2. run `go install seenio/dbContext` in the dbContext folder
+3. `dbContext` in terminal to start application
 
 ### Tables
 
