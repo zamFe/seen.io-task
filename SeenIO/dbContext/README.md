@@ -6,7 +6,8 @@ A REST-API written in GoLang, using a psql database.
 Object-relation mappings done using the gorm-package.
 
 ### Requirements
-Applications requires a config.go with database parameters as const:
+Applications requires a config.go with database parameters:
+
 ![config template](https://github.com/zamFe/seen.io-task/blob/main/SeenIO/images/config_template.png?raw=true)
 ### Setup
 
